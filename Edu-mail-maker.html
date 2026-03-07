@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>교육제안 메일 Generator</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+</head>
+<body>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --primary: #0066CC;
+  --primary-light: #00A5E5;
+  --primary-dark: #003D7A;
+  --bg-main: #F5F8FC;
+  --bg-white: #FFFFFF;
+  --accent-orange: #FF6B00;
+  --accent-green: #00B67A;
+  --text-primary: #1A1A2E;
+  --text-secondary: #5A6070;
+  --text-light: #8A90A0;
+  --border: #E2E8F0;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --danger: #dc2626;
+  --danger-light: #fee2e2;
+}
+
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  background: var(--bg-main);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.calculator-wrap {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+/* ─── Header ─── */
+.calc-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border-radius: var(--radius-lg);
+  padding: 36px 40px;
+  margin-bottom: 28px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.calc-header::after {
+  content: '';
+  position: absolute;
+  top: -40%; right: -10%;
+  width: 300px; height: 300px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+}
+.header-text { position: relative; z-index: 1; flex: 1; }
+.calc-header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.5px; }
+.calc-header .subtitle { font-size: 14px; opacity: 0.8; font-weight: 400; }
+.header-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 20px; padding: 4px 14px;
+  font-size: 12px; font-weight: 500; margin-bottom: 12px;
+}
+.header-illustration {
+  position: relative; z-index: 1; flex-shrink: 0;
+  width: 180px; height: 160px; opacity: 0.92;
+}
+
+/* ─── Section Card ─── */
+.section-card {
+  background: var(--bg-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border);
+  padding: 28px 32px;
+  margin-bottom: 20px;
+}
+.section-title {
+  font-size: 17px; font-weight: 700; color: var(--text-primary);
+  margin-bottom: 20px; display: flex; align-items: center; gap: 8px;
+}
+.section-title .icon {
+  width: 28px; height: 28px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.icon-blue { background: #E8F4FD; color: var(--primary); }
+
+/* ─── Input ─── */
+.input-group { display: flex; flex-direction: column; gap: 6px; }
+.input-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+.input-hint { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+.input-field {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-size: 15px; font-family: inherit; color: var(--text-primary);
+  transition: border-color 0.2s, box-shadow 0.2s; background: #FAFBFC;
+}
+.input-field:focus {
+  outline: none; border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0,102,204,0.1); background: #fff;
+}
+.input-field::placeholder { color: var(--text-light); }
+
+/* ─── Drop Zone ─── */
+.drop-zone {
+  border: 2.5px dashed var(--border);
+  border-radius: var(--radius-md);
+  padding: 48px 24px;
+  text-align: center;
+  transition: all 0.2s;
+  cursor: pointer;
+  background: #FAFBFC;
+  margin-top: 16px;
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color: var(--primary);
+  background: #EBF5FF;
+}
+.drop-zone.drag-over { transform: scale(1.01); }
+.drop-icon { font-size: 48px; margin-bottom: 12px; }
+.drop-text { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; }
+.drop-hint { font-size: 13px; color: var(--text-light); margin-bottom: 20px; }
+.btn-upload {
+  display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px;
+  background: var(--primary); color: #fff; border: none; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+  transition: background 0.15s;
+}
+.btn-upload:hover { background: var(--primary-dark); }
+
+/* ─── Error ─── */
+.error-message {
+  display: none; background: var(--danger-light); border: 1px solid #fca5a5;
+  color: var(--danger); padding: 12px 18px; border-radius: var(--radius-sm);
+  margin-bottom: 20px; font-size: 14px; font-weight: 500;
+}
+.error-message.active { display: block; }
+
+/* ─── Queue ─── */
+#queue { display: flex; flex-direction: column; gap: 14px; }
+.queue-item {
+  background: var(--bg-white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  animation: fadeInUp 0.3s ease;
+}
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+.queue-thumb {
+  width: 72px; height: 56px; border-radius: 6px;
+  overflow: hidden; flex-shrink: 0;
+  border: 1px solid var(--border);
+  background: #f1f5f9;
+  display: flex; align-items: center; justify-content: center;
+}
+.queue-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.queue-thumb .thumb-placeholder { font-size: 24px; }
+.queue-info { flex: 1; min-width: 0; }
+.queue-filename { font-size: 14px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+.queue-status-row { display: flex; align-items: center; gap: 8px; }
+.status-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+}
+.status-waiting { background: #F1F5F9; color: var(--text-secondary); }
+.status-processing { background: #EBF5FF; color: var(--primary); }
+.status-done { background: #E6F9F1; color: #047857; }
+.status-error { background: var(--danger-light); color: var(--danger); }
+.status-spinner {
+  width: 10px; height: 10px;
+  border: 2px solid #BDD7F5; border-top-color: var(--primary);
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.queue-step { font-size: 11px; color: var(--text-light); }
+.progress-wrap { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.progress-bar { flex: 1; height: 6px; background: #E2E8F0; border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary-light), var(--primary)); border-radius: 3px; transition: width 0.4s ease; }
+.progress-pct { font-size: 11px; font-weight: 700; color: var(--primary); min-width: 32px; text-align: right; }
+.queue-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.btn-open {
+  padding: 8px 16px; border-radius: var(--radius-sm);
+  background: var(--primary); color: #fff; border: none;
+  font-size: 13px; font-weight: 600; font-family: inherit;
+  transition: background 0.15s; white-space: nowrap;
+  text-decoration: none; display: inline-flex; align-items: center;
+}
+.btn-open:hover { background: var(--primary-dark); color: #fff; }
+.btn-open.disabled { opacity: 0.4; pointer-events: none; cursor: default; }
+
+/* ─── Footer ─── */
+.calc-footer { text-align: center; padding: 24px; color: var(--text-light); font-size: 12px; }
+
+/* ─── Responsive ─── */
+@media (max-width: 768px) {
+  .calc-header { flex-direction: column; text-align: center; }
+  .header-illustration { width: 120px; height: 100px; order: -1; }
+  .queue-item { flex-wrap: wrap; }
+  .queue-actions { width: 100%; }
+}
+@media (max-width: 600px) {
+  .calculator-wrap { padding: 12px 12px 40px; }
+  .calc-header { padding: 24px 20px; }
+  .calc-header h1 { font-size: 20px; }
+  .section-card { padding: 20px 16px; }
+}
+</style>
+
+<div class="calculator-wrap">
+
+  <!-- Header -->
+  <header class="calc-header">
+    <div class="header-text">
+      <div class="header-badge">✉️ 교육제안 메일 Generator</div>
+      <h1>교육제안 메일 자동 생성기</h1>
+      <p class="subtitle">스크린샷을 드래그 앤 드랍하면 OCR 분석 후 맞춤 교육과정을 매칭하여 제안 메일을 자동 생성합니다.</p>
+    </div>
+    <div class="header-illustration">
+      <svg viewBox="0 0 200 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Envelope body -->
+        <rect x="20" y="50" width="160" height="110" rx="10" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+        <!-- Envelope flap open -->
+        <path d="M20 60 L100 115 L180 60" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Lines suggesting text -->
+        <rect x="38" y="120" width="60" height="4" rx="2" fill="rgba(255,255,255,0.2)"/>
+        <rect x="38" y="130" width="80" height="4" rx="2" fill="rgba(255,255,255,0.2)"/>
+        <rect x="38" y="140" width="50" height="4" rx="2" fill="rgba(255,255,255,0.2)"/>
+        <!-- Screenshot icon floating -->
+        <rect x="60" y="15" width="50" height="40" rx="5" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+        <rect x="66" y="22" width="38" height="26" rx="3" fill="rgba(255,255,255,0.1)"/>
+        <line x1="66" y1="33" x2="104" y2="33" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+        <line x1="66" y1="38" x2="95" y2="38" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+        <!-- Arrow -->
+        <path d="M88 55 L88 66" stroke="rgba(255,255,255,0.5)" stroke-width="2" stroke-linecap="round" marker-end="url(#arrowhead)"/>
+        <polygon points="83,63 88,72 93,63" fill="rgba(255,255,255,0.4)"/>
+        <text x="100" y="175" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="10" font-family="Pretendard, sans-serif" font-weight="600">MAIL GENERATOR</text>
+      </svg>
+    </div>
+  </header>
+
+  <!-- API Key -->
+  <section class="section-card">
+    <div class="section-title"><span class="icon icon-blue">⚙️</span> 설정</div>
+    <div class="input-group">
+      <label class="input-label">Anthropic API Key</label>
+      <input type="password" class="input-field" id="apiKey" placeholder="sk-ant-api03-...">
+      <span class="input-hint">API 키는 브라우저에서만 사용되며 어디에도 저장·전송되지 않습니다. (로컬 localStorage에만 임시 보관)</span>
+    </div>
+  </section>
+
+  <!-- Drop Zone -->
+  <section class="section-card">
+    <div class="section-title"><span class="icon icon-blue">📸</span> 스크린샷 업로드</div>
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-icon">🖼️</div>
+      <div class="drop-text">스크린샷을 여기에 드래그 앤 드랍하세요</div>
+      <div class="drop-hint">PNG · JPG · WEBP 등 이미지 파일 지원 &nbsp;|&nbsp; 여러 파일 동시 업로드 가능</div>
+      <label class="btn-upload" for="fileInput">📁 파일 선택</label>
+      <input type="file" id="fileInput" accept="image/*" multiple style="display:none">
+    </div>
+  </section>
+
+  <!-- Error -->
+  <div class="error-message" id="errorMsg"></div>
+
+  <!-- Queue -->
+  <div id="queue"></div>
+
+</div>
+
+<div class="calc-footer">Powered by Claude Sonnet 4.6 API &nbsp;|&nbsp; 교육제안 메일 Generator &nbsp;|&nbsp; 나눔경영컨설팅 김종혁 제작</div>
+
+<script>
+(function () {
+'use strict';
+
+/* ═══════════════════════════════════════
+   교육 과정 데이터 (CSV 전체)
+═══════════════════════════════════════ */
+const COURSES = [
+  {n:"B2B마케팅 AtoZ",l:"https://nanumcon.com/42"},
+  {n:"B2B 가치제안",l:"https://nanumcon.com/231"},
+  {n:"B2B 브랜드 전략",l:"https://nanumcon.com/229"},
+  {n:"AI 활용 B2B마케팅",l:"https://nanumcon.com/200"},
+  {n:"B2B세일즈 AtoZ",l:"https://nanumcon.com/174"},
+  {n:"B2B 세일즈 확장전략 : 크로스셀링 & 업셀링",l:"https://nanumcon.com/234"},
+  {n:"B2B 신규 바이어 발굴",l:"https://nanumcon.com/235"},
+  {n:"B2B세일즈 조직관리, 역량강화",l:"https://nanumcon.com/233"},
+  {n:"B2B마케팅 전략 워크숍 (15단계)",l:"https://nanumcon.com/203"},
+  {n:"B2B세일즈 프레젠테이션",l:"https://nanumcon.com/179"},
+  {n:"AI 활용 디지털 마케팅",l:"https://nanumcon.com/199"},
+  {n:"디지털마케팅 AtoZ",l:"https://nanumcon.com/29"},
+  {n:"경영전략의 역사",l:"https://nanumcon.com/166"},
+  {n:"마케팅전략 수립 워크샵",l:"https://nanumcon.com/43"},
+  {n:"신시장·신사업 발굴 워크샵",l:"https://nanumcon.com/204"},
+  {n:"급변하는 마케팅환경 대응전략",l:"https://nanumcon.com/45"},
+  {n:"경제트렌드 분석",l:"https://nanumcon.com/169"},
+  {n:"ESG이해와 대응전략 수립",l:"https://nanumcon.com/31"},
+  {n:"ESG와 페이퍼리스",l:"https://nanumcon.com/236"},
+  {n:"이문화 커뮤니케이션, 글로벌 마인드셋",l:"https://nanumcon.com/53"},
+  {n:"글로벌 방문객 응대교육",l:"https://nanumcon.com/232"},
+  {n:"해외시장조사",l:"https://nanumcon.com/171"},
+  {n:"마케팅트렌드 특강",l:"https://nanumcon.com/162"},
+  {n:"2026년 소비트렌드 교육",l:"https://nanumcon.com/114"},
+  {n:"비즈니스 협상 AtoZ",l:"https://nanumcon.com/48"},
+  {n:"비즈니스 협상 AtoZ (영어)",l:"https://nanumcon.com/161"},
+  {n:"세일즈 성공법칙",l:"https://nanumcon.com/175"},
+  {n:"세일즈 프로세스",l:"https://nanumcon.com/117"},
+  {n:"세일즈 커뮤니케이션",l:"https://nanumcon.com/206"},
+  {n:"온라인 바이럴마케팅",l:"https://nanumcon.com/47"},
+  {n:"실전마케팅 전략",l:"https://nanumcon.com/49"},
+  {n:"CX, 고객경험",l:"https://nanumcon.com/130"},
+  {n:"CRM AtoZ",l:"https://nanumcon.com/167"},
+  {n:"소비자 구매심리",l:"https://nanumcon.com/144"},
+  {n:"해외마케팅, 영업능력 향상",l:"https://nanumcon.com/50"},
+  {n:"주재원의 역할",l:"https://nanumcon.com/192"},
+  {n:"비즈니스 매너 (기본)",l:"https://nanumcon.com/55"},
+  {n:"비즈니스 매너 (글로벌 에티켓)",l:"https://nanumcon.com/135"},
+  {n:"전시회 운영과 CRM, STP전략",l:"https://nanumcon.com/54"},
+  {n:"중국 이문화 이해 (역사, 정치, 경제)",l:"https://nanumcon.com/52"},
+  {n:"중화권 마케팅, 세일즈 전략",l:"https://nanumcon.com/51"},
+  {n:"Social Style로 배우는 고객심리",l:"https://nanumcon.com/56"},
+  {n:"MBTI, DISC로 세일즈전략 수립",l:"https://nanumcon.com/132"},
+  {n:"마케팅 포지셔닝과 Value Proposition",l:"https://nanumcon.com/44"},
+  {n:"마케팅 포지셔닝과 Value Proposition (제안서 작성)",l:"https://nanumcon.com/129"},
+  {n:"DB마케팅",l:"https://nanumcon.com/165"},
+  {n:"MBO의 이해",l:"https://nanumcon.com/121"},
+  {n:"고객중심 영업의 중요성",l:"https://nanumcon.com/134"},
+  {n:"가격전략",l:"https://nanumcon.com/133"},
+  {n:"무역실무",l:"https://nanumcon.com/139"},
+  {n:"유통",l:"https://nanumcon.com/153"},
+  {n:"AI툴 활용법 교육 (용도별)",l:"https://nanumcon.com/177"},
+  {n:"에이전트 AI 실무 입문",l:"https://nanumcon.com/266"},
+  {n:"IT 트렌드 2026",l:"https://nanumcon.com/238"},
+  {n:"AI로 영상제작",l:"https://nanumcon.com/241"},
+  {n:"ChatGPT 교육",l:"https://nanumcon.com/168"},
+  {n:"쉽게 배우는 반도체 교육",l:"https://nanumcon.com/198"},
+  {n:"유튜버육성 전문교육",l:"https://nanumcon.com/27"},
+  {n:"유튜브 멘토링",l:"https://nanumcon.com/154"},
+  {n:"쉬운 동영상 촬영과 편집",l:"https://nanumcon.com/58"},
+  {n:"마이크로 러닝 컨텐츠 제작",l:"https://nanumcon.com/137"},
+  {n:"디지털 트랜스포메이션",l:"https://nanumcon.com/120"},
+  {n:"디지털 리터러시",l:"https://nanumcon.com/118"},
+  {n:"IT스마트워킹",l:"https://nanumcon.com/59"},
+  {n:"IT이노베이션",l:"https://nanumcon.com/131"},
+  {n:"원격비대면 강의기법",l:"https://nanumcon.com/57"},
+  {n:"SNS활용법",l:"https://nanumcon.com/60"},
+  {n:"구글 스프레드시트 활용법",l:"https://nanumcon.com/195"},
+  {n:"IR 피칭",l:"https://nanumcon.com/178"},
+  {n:"IR 피칭 멘토링",l:"https://nanumcon.com/220"},
+  {n:"창업멘토링",l:"https://nanumcon.com/61"},
+  {n:"사내벤처 운영",l:"https://nanumcon.com/172"},
+  {n:"창업마케팅 전략",l:"https://nanumcon.com/63"},
+  {n:"Business Model Canvas 워크샵",l:"https://nanumcon.com/62"},
+  {n:"사업계획서 작성법",l:"https://nanumcon.com/66"},
+  {n:"1인강사 창업하기",l:"https://nanumcon.com/67"},
+  {n:"기업가 정신과 창업가 정신",l:"https://nanumcon.com/64"},
+  {n:"창업 아이템개발 및 탐색",l:"https://nanumcon.com/65"},
+  {n:"면접전략, PT면접",l:"https://nanumcon.com/138"},
+  {n:"이력서와 자소서 작성법",l:"https://nanumcon.com/155"},
+  {n:"중장년층 재취업 전략",l:"https://nanumcon.com/157"},
+  {n:"기업강사 육성과정",l:"https://nanumcon.com/243"},
+  {n:"사내강사 육성과정",l:"https://nanumcon.com/68"},
+  {n:"사내강사 육성과정 (영어)",l:"https://nanumcon.com/69"},
+  {n:"외국인 대상강의, 워크샵 (영어)",l:"https://nanumcon.com/70"},
+  {n:"한국 비즈니스 문화의 특징 (영어)",l:"https://nanumcon.com/71"},
+  {n:"비즈니스 영어",l:"https://nanumcon.com/142"},
+  {n:"영어서식 작성방법",l:"https://nanumcon.com/151"},
+  {n:"접객 중국어",l:"https://nanumcon.com/158"},
+  {n:"프레젠테이션 AtoZ",l:"https://nanumcon.com/72"},
+  {n:"프레젠테이션 (회사소개)",l:"https://nanumcon.com/160"},
+  {n:"영어 프레젠테이션 교육",l:"https://nanumcon.com/73"},
+  {n:"영어 프레젠테이션 실습",l:"https://nanumcon.com/152"},
+  {n:"PPT, 키노트, 프레지 교육",l:"https://nanumcon.com/74"},
+  {n:"세일즈피칭 교육",l:"https://nanumcon.com/124"},
+  {n:"엘리베이터 피치",l:"https://nanumcon.com/149"},
+  {n:"기획력 향상과정",l:"https://nanumcon.com/75"},
+  {n:"기획력 (OPR중심)",l:"https://nanumcon.com/173"},
+  {n:"수명, 보고능력 향상과정",l:"https://nanumcon.com/76"},
+  {n:"효율적인 회의기법 교육",l:"https://nanumcon.com/77"},
+  {n:"변화 혁신, 변화관리",l:"https://nanumcon.com/78"},
+  {n:"다양성, Diversity",l:"https://nanumcon.com/81"},
+  {n:"소통, 커뮤니케이션",l:"https://nanumcon.com/79"},
+  {n:"동기부여, 긍정적인 마인드",l:"https://nanumcon.com/80"},
+  {n:"갈등관리",l:"https://nanumcon.com/122"},
+  {n:"리더십",l:"https://nanumcon.com/82"},
+  {n:"셀프리더십",l:"https://nanumcon.com/143"},
+  {n:"리더십 워크샵",l:"https://nanumcon.com/136"},
+  {n:"팔로워십",l:"https://nanumcon.com/83"},
+  {n:"팀워크",l:"https://nanumcon.com/84"},
+  {n:"멘토링",l:"https://nanumcon.com/85"},
+  {n:"임파워링",l:"https://nanumcon.com/156"},
+  {n:"디자인씽킹 (교육 & 워크샵 / 공식자격 보유)",l:"https://nanumcon.com/86"},
+  {n:"MZ세대 이해 & 감성리더십 (X세대용)",l:"https://nanumcon.com/128"},
+  {n:"MZ세대 이해 & 감성리더십 (MZ세대용)",l:"https://nanumcon.com/32"},
+  {n:"TRIZ (교육 & 워크샵)",l:"https://nanumcon.com/123"},
+  {n:"TSMC 이야기",l:"https://nanumcon.com/197"},
+  {n:"MBTI검사와 성향분석 (공식자격 보유)",l:"https://nanumcon.com/92"},
+  {n:"MBTI검사와 성향분석 (영어)",l:"https://nanumcon.com/125"},
+  {n:"4차 산업혁명과 미래의 직업",l:"https://nanumcon.com/87"},
+  {n:"4차 산업혁명과 빅데이터",l:"https://nanumcon.com/88"},
+  {n:"스마트팩토리, 생산관리",l:"https://nanumcon.com/147"},
+  {n:"영화와 드라마로 배우는 조선사",l:"https://nanumcon.com/90"},
+  {n:"영화 '관상'으로 배우는 조선이야기",l:"https://nanumcon.com/91"},
+  {n:"전쟁과 전투로 배우는 비즈니스 전략",l:"https://nanumcon.com/89"},
+  {n:"메타버스 마케팅, 행사진행 AtoZ",l:"https://nanumcon.com/30"},
+  {n:"여행의 즐거움",l:"https://nanumcon.com/127"},
+  {n:"커피 스토리",l:"https://nanumcon.com/194"},
+  {n:"초보캠퍼, 차박러를 위한 강의",l:"https://nanumcon.com/94"},
+  {n:"배낭여행과 음악이야기",l:"https://nanumcon.com/93"},
+  {n:"이미지메이킹",l:"https://nanumcon.com/126"},
+  {n:"문제해결, 위기관리",l:"https://nanumcon.com/141"},
+  {n:"창의력 향상과정",l:"https://nanumcon.com/159"},
+  {n:"글로벌 이문화 이해, 커뮤니케이션 역량강화",l:"https://nanumcon.com/98"},
+  {n:"한국조직 & 업무문화의 이해 (외국인 대상)",l:"https://nanumcon.com/99"},
+  {n:"15년 통역사가 알려주는 실제현장 비즈니스 영어",l:"https://nanumcon.com/100"},
+  {n:"글로벌 커뮤니케이션 회의 & E-mail 팁",l:"https://nanumcon.com/108"},
+  {n:"효율적인 회의기법",l:"https://nanumcon.com/109"},
+  {n:"글로벌 컨퍼런스 & 국제교류, 스피치 대회",l:"https://nanumcon.com/112"},
+  {n:"글로벌 비즈니스 과정",l:"https://nanumcon.com/111"},
+  {n:"면접영어와 해외취업준비",l:"https://nanumcon.com/113"},
+  {n:"직장내 성희롱 예방교육",l:"https://nanumcon.com/101"},
+  {n:"개인정보보호교육",l:"https://nanumcon.com/102"},
+  {n:"직장내 장애인 인식개선 교육",l:"https://nanumcon.com/103"},
+  {n:"직장내 갑질방지교육",l:"https://nanumcon.com/107"},
+  {n:"취업전략",l:"https://nanumcon.com/104"},
+  {n:"항공지상직 이해",l:"https://nanumcon.com/105"},
+  {n:"NCS 직업기초능력",l:"https://nanumcon.com/106"}
+];
+
+/* ═══════════════════════════════════════
+   출력 HTML 생성 함수
+═══════════════════════════════════════ */
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function buildOutputHTML(fileName, dateStr, ocrText, parsed) {
+  const subject      = (parsed.subject || '교육과정 제안')
+    .replace(/\s*[\-–—\/|]\s*나눔경영컨설팅\s*$/i, '').trim();
+  const emailAddr    = parsed.email || '';
+  const greeting     = parsed.greeting_sentence || '';
+  const intro        = parsed.intro_sentence || '';
+  const courses      = Array.isArray(parsed.matched_courses) ? parsed.matched_courses : [];
+
+  /* ── 화면 표시용 과정 카드 ── */
+  const coursesHtml = courses.map((c, i) =>
+    '<div style="display:flex;align-items:flex-start;gap:14px;padding:14px 18px;background:#EBF5FF;border-left:4px solid #0066CC;border-radius:8px;margin-bottom:10px;">' +
+    '<span style="background:#0066CC;color:white;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;line-height:1;">' + (i+1) + '</span>' +
+    '<div><div style="font-weight:700;color:#003D7A;font-size:15px;margin-bottom:3px;">' + esc(c.name) + '</div>' +
+    '<a href="' + esc(c.link) + '" target="_blank" style="color:#0066CC;font-size:13px;text-decoration:none;">' + esc(c.link) + '</a></div></div>'
+  ).join('');
+
+  const greetingBlock = (greeting || intro)
+    ? '\n\n' + (greeting ? greeting + '\n\n' : '') + (intro || '')
+    : '\n\n저희 나눔경영컨설팅에서 맞춤형 교육과정을 제안 드립니다.';
+
+  /* ── Gmail 붙여넣기용 인라인 HTML (세련된 디자인) ── */
+  var GF = "font-family:'Apple SD Gothic Neo','Malgun Gothic',Arial,sans-serif;";
+  var gmailParts = [];
+
+  gmailParts.push('<div style="' + GF + 'max-width:620px;color:#222222;font-size:14px;line-height:1.85;">');
+
+  // 인사
+  gmailParts.push('<p style="margin:0 0 20px;font-size:14px;line-height:1.85;color:#222;">안녕하세요,</p>');
+
+  // 인사 + 소개 문장 (볼드 강조 포함)
+  if (greeting) {
+    gmailParts.push('<p style="margin:0 0 16px;font-size:14px;line-height:1.85;color:#222;">' + esc(greeting) + '</p>');
+  }
+  if (intro) {
+    gmailParts.push('<p style="margin:0 0 20px;font-size:14px;line-height:1.85;color:#222;">' + esc(intro) + '</p>');
+  }
+  if (!greeting && !intro) {
+    gmailParts.push('<p style="margin:0 0 20px;font-size:14px;line-height:1.85;color:#222;">저희 <b>나눔경영컨설팅</b>에서 맞춤형 교육과정을 제안 드립니다.</p>');
+  }
+
+  // 구분선
+  gmailParts.push('<hr style="border:none;border-top:1px solid #E0E0E0;margin:24px 0;">');
+
+  // 강사 소개 박스
+  gmailParts.push(
+    '<table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0 0 24px;">' +
+    '<tr><td style="background:#F4F8FC;border-left:4px solid #0066CC;border-radius:0 8px 8px 0;padding:16px 20px;' + GF + 'font-size:13px;line-height:1.8;color:#333;">' +
+    '본 교육을 담당할 <b style="color:#0066CC;">김종혁 강사</b>는 다양한 기업과 기관에서 디지털 전환, AI 활용, 마케팅 전략 등의 강의와 컨설팅을 진행해 왔습니다.<br>' +
+    '📎 강사 소개 : <a href="https://nanumcon.com/3" style="color:#0066CC;font-weight:600;text-decoration:none;">nanumcon.com/3</a>' +
+    '</td></tr></table>'
+  );
+
+  // 과정 안내 문구
+  gmailParts.push('<p style="margin:0 0 16px;font-size:14px;line-height:1.85;color:#222;">저희 나눔경영컨설팅에서 제공하는 교육 과정 중 <b>귀사의 목적에 부합할 것으로 예상되는 과정</b>은 다음과 같습니다.</p>');
+
+  // 과정 카드 (테이블 기반 - Gmail 호환)
+  courses.forEach(function(c, i) {
+    var bgColor = (i % 2 === 0) ? '#F8FAFC' : '#FFFFFF';
+    gmailParts.push(
+      '<table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:0 0 8px;">' +
+      '<tr>' +
+      '<td width="32" valign="top" style="padding:12px 0 12px 14px;background:' + bgColor + ';border-left:3px solid #0066CC;border-radius:0;">' +
+      '<span style="display:inline-block;background:#0066CC;color:white;width:22px;height:22px;border-radius:50%;text-align:center;line-height:22px;font-size:11px;font-weight:700;">' + (i+1) + '</span>' +
+      '</td>' +
+      '<td style="padding:12px 14px;background:' + bgColor + ';">' +
+      '<span style="font-size:14px;font-weight:700;color:#1A1A2E;">' + esc(c.name) + '</span><br>' +
+      '<a href="' + esc(c.link) + '" style="font-size:12px;color:#0066CC;text-decoration:none;">' + esc(c.link) + '</a>' +
+      '</td>' +
+      '</tr></table>'
+    );
+  });
+
+  // 구분선
+  gmailParts.push('<hr style="border:none;border-top:1px solid #E0E0E0;margin:24px 0;">');
+
+  // 마무리
+  gmailParts.push('<p style="margin:0 0 20px;font-size:14px;line-height:1.85;color:#222;">위에 제시된 과정은 귀사의 니즈에 맞춰 <b>커리큘럼 조정이 가능</b>하오니, 검토 후 편하게 회신 주시면 <b>맞춤형 커리큘럼과 견적</b>으로 상세히 제안드리겠습니다.</p>');
+
+  // 서명
+  gmailParts.push(
+    '<table cellpadding="0" cellspacing="0" border="0" style="margin-top:8px;">' +
+    '<tr><td style="padding:0;' + GF + 'font-size:14px;line-height:2;color:#222;">' +
+    '감사합니다.<br><br>' +
+    '<b style="color:#0066CC;">나눔경영컨설팅</b><br>' +
+    '<b>김종혁</b> 대표 드림' +
+    '</td></tr></table>'
+  );
+
+  gmailParts.push('</div>');
+  const gmailHtml = gmailParts.join('');
+  const gmailHtmlJson = JSON.stringify(gmailHtml);
+  const bandTextJson = JSON.stringify(ocrText);
+  const subjectTextJson = JSON.stringify(subject + ' / 나눔경영컨설팅');
+  const emailTextJson = JSON.stringify(emailAddr);
+
+  var FF = "'Pretendard',-apple-system,BlinkMacSystemFont,system-ui,sans-serif";
+
+  return '<!DOCTYPE html>\n' +
+'<html lang="ko">\n' +
+'<head>\n' +
+'<meta charset="UTF-8">\n' +
+'<meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
+'<title>교육제안 - ' + esc(fileName) + '</title>\n' +
+'<link rel="preconnect" href="https://cdn.jsdelivr.net">\n' +
+'<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">\n' +
+'</head>\n' +
+'<body style="margin:0;padding:24px 16px 60px;font-family:' + FF + ';background:#F5F8FC;color:#1A1A2E;line-height:1.6;-webkit-font-smoothing:antialiased;">\n' +
+'<div style="max-width:860px;margin:0 auto;">\n\n' +
+
+'  <!-- Header -->\n' +
+'  <div style="background:linear-gradient(135deg,#0066CC,#003D7A);color:white;padding:28px 32px;border-radius:14px;margin-bottom:20px;position:relative;overflow:hidden;">\n' +
+'    <div style="font-size:12px;opacity:0.7;margin-bottom:8px;">📸 교육제안 메일 생성 결과</div>\n' +
+'    <div style="font-size:21px;font-weight:700;letter-spacing:-0.3px;">' + esc(fileName) + '</div>\n' +
+'    <div style="font-size:12px;opacity:0.55;margin-top:6px;">' + esc(dateStr) + '</div>\n' +
+'  </div>\n\n' +
+
+'  <!-- 구간 1: OCR -->\n' +
+'  <div style="background:white;border-radius:12px;border:1px solid #E2E8F0;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:20px;overflow:hidden;">\n' +
+'    <div style="padding:14px 24px;font-size:13px;font-weight:700;letter-spacing:0.5px;color:white;display:flex;align-items:center;gap:8px;justify-content:space-between;background:linear-gradient(90deg,#475569,#64748b);">\n' +
+'      <span>📄 구간 1 &mdash; OCR 추출 텍스트 (원문)</span>\n' +
+'      <button id="bandBtn" onclick="copyBand()" style="background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.35);color:white;border-radius:6px;padding:4px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:' + FF + ';white-space:nowrap;">📋 네이버 밴드로 복사</button>\n' +
+'    </div>\n' +
+'    <div style="padding:28px 32px;white-space:pre-wrap;word-break:break-word;font-size:14px;line-height:1.9;color:#1A1A2E;background:#FAFBFC;font-family:' + FF + ';">' + esc(ocrText) + '</div>\n' +
+'  </div>\n\n' +
+
+'  <!-- 구간 2: 메일 -->\n' +
+'  <div style="background:white;border-radius:12px;border:1px solid #E2E8F0;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:20px;overflow:hidden;">\n' +
+'    <div style="padding:14px 24px;font-size:13px;font-weight:700;letter-spacing:0.5px;color:white;background:linear-gradient(90deg,#0066CC,#0055AA);">✉️ 구간 2 &mdash; 교육제안 메일</div>\n' +
+'    <div style="padding:36px 40px;background:white;">\n' +
+
+'      <!-- 메일주소 -->\n' +
+'      <div style="font-size:14px;color:#5A6070;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;flex-wrap:wrap;gap:8px;">\n' +
+'        <span>메일주소 : ' + esc(emailAddr) + '</span>\n' +
+'        <button id="emailBtn" onclick="copyEmail()" style="background:#E8F4FD;border:1px solid #BDD7F5;color:#0066CC;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:' + FF + ';">📋 복사</button>\n' +
+'      </div>\n' +
+
+'      <!-- 제목 -->\n' +
+'      <div style="font-size:18px;font-weight:800;color:#1A1A2E;padding-bottom:14px;border-bottom:2px solid #E2E8F0;margin-bottom:12px;display:flex;align-items:center;flex-wrap:wrap;gap:8px;">\n' +
+'        <span>제목 : ' + esc(subject) + ' / 나눔경영컨설팅</span>\n' +
+'        <button id="subjBtn" onclick="copySubject()" style="background:#E8F4FD;border:1px solid #BDD7F5;color:#0066CC;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:600;cursor:pointer;font-family:' + FF + ';">📋 복사</button>\n' +
+'      </div>\n' +
+
+'      <!-- Gmail 버튼 -->\n' +
+'      <div style="margin-bottom:28px;">\n' +
+'        <button id="gmailBtn" onclick="copyForGmail()" style="width:100%;padding:14px;background:#0066CC;color:white;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:' + FF + ';letter-spacing:-0.2px;">📋 Gmail로 복사 &nbsp;—&nbsp; 클릭 후 Gmail 본문에 Ctrl+V (Cmd+V)</button>\n' +
+'      </div>\n' +
+
+'      <!-- 본문 -->\n' +
+'      <div style="font-size:15px;font-weight:400;line-height:2.1;color:#1A1A2E;margin-bottom:20px;white-space:pre-wrap;">안녕하세요,' + greetingBlock + '</div>\n' +
+
+'      <!-- 강사 소개 -->\n' +
+'      <div style="background:#F0F7FF;border-radius:10px;padding:16px 20px;margin:20px 0;font-size:14px;font-weight:400;color:#1A1A2E;line-height:1.8;border-left:4px solid #00A5E5;">\n' +
+'        본 교육을 담당할 김종혁 강사는 다양한 기업과 기관에서 디지털 전환, AI 활용, 마케팅 전략 등의 강의와 컨설팅을 진행해 왔습니다.<br>\n' +
+'        김종혁 강사 소개 : <a href="https://nanumcon.com/3" target="_blank" style="color:#0066CC;text-decoration:none;">https://nanumcon.com/3</a>\n' +
+'      </div>\n' +
+
+'      <div style="font-size:15px;font-weight:400;line-height:2.1;color:#1A1A2E;margin-bottom:20px;">저희 나눔경영컨설팅에서 제공하는 교육 과정 중 귀사의 목적에 부합할 것으로 예상되는 과정은 다음과 같습니다.</div>\n' +
+
+'      <!-- 과정 카드 -->\n' +
+'      <div style="margin:20px 0;">' + coursesHtml + '</div>\n' +
+
+'      <!-- 서명 -->\n' +
+'      <div style="margin-top:28px;font-size:15px;font-weight:400;line-height:2.2;color:#1A1A2E;border-top:1px solid #E2E8F0;padding-top:24px;">\n' +
+'        위에 제시된 과정은 귀사의 니즈에 맞춰 커리큘럼 조정이 가능하오니, 검토 후 편하게 회신 주시면 맞춤형 커리큘럼과 견적으로 상세히 제안드리겠습니다.<br><br>\n' +
+'        감사합니다.<br><br>\n' +
+'        나눔경영컨설팅<br>\n' +
+'        김종혁 대표 드림\n' +
+'      </div>\n' +
+'    </div>\n' +
+'  </div>\n\n' +
+
+'</div>\n' +
+'<' + 'script>\n' +
+'var GMAIL_HTML = ' + gmailHtmlJson + ';\n' +
+'var BAND_TEXT = ' + bandTextJson + ';\n' +
+'var SUBJECT_TEXT = ' + subjectTextJson + ';\n' +
+'var EMAIL_TEXT = ' + emailTextJson + ';\n' +
+'function copyToClipboard(text, btnId, label) {\n' +
+'  function doFeedback(ok) {\n' +
+'    var btn = document.getElementById(btnId);\n' +
+'    if (!btn) return;\n' +
+'    btn.textContent = ok ? "✅ 복사됨" : "⚠️ 실패";\n' +
+'    setTimeout(function() { btn.textContent = label; }, 2000);\n' +
+'  }\n' +
+'  if (navigator.clipboard && navigator.clipboard.writeText) {\n' +
+'    navigator.clipboard.writeText(text).then(function(){ doFeedback(true); }).catch(function(){\n' +
+'      var ta = document.createElement("textarea");\n' +
+'      ta.value = text; ta.style.cssText = "position:fixed;top:-9999px;left:-9999px;";\n' +
+'      document.body.appendChild(ta); ta.select();\n' +
+'      var ok = document.execCommand("copy");\n' +
+'      document.body.removeChild(ta); doFeedback(ok);\n' +
+'    });\n' +
+'  } else {\n' +
+'    var ta = document.createElement("textarea");\n' +
+'    ta.value = text; ta.style.cssText = "position:fixed;top:-9999px;left:-9999px;";\n' +
+'    document.body.appendChild(ta); ta.select();\n' +
+'    var ok = document.execCommand("copy");\n' +
+'    document.body.removeChild(ta); doFeedback(ok);\n' +
+'  }\n' +
+'}\n' +
+'function copyBand() { copyToClipboard(BAND_TEXT, "bandBtn", "📋 네이버 밴드로 복사"); }\n' +
+'function copySubject() { copyToClipboard(SUBJECT_TEXT, "subjBtn", "📋 복사"); }\n' +
+'function copyEmail() { copyToClipboard(EMAIL_TEXT, "emailBtn", "📋 복사"); }\n' +
+'function copyForGmail() {\n' +
+'  var div = document.createElement("div");\n' +
+'  div.contentEditable = "true";\n' +
+'  div.style.cssText = "position:fixed;top:-9999px;left:-9999px;pointer-events:none;background:white;color:#333333;";\n' +
+'  div.innerHTML = GMAIL_HTML;\n' +
+'  document.body.appendChild(div);\n' +
+'  var range = document.createRange();\n' +
+'  range.selectNodeContents(div);\n' +
+'  var sel = window.getSelection();\n' +
+'  sel.removeAllRanges();\n' +
+'  sel.addRange(range);\n' +
+'  var ok = document.execCommand("copy");\n' +
+'  document.body.removeChild(div);\n' +
+'  sel.removeAllRanges();\n' +
+'  var btn = document.getElementById("gmailBtn");\n' +
+'  if (ok) {\n' +
+'    btn.textContent = "✅ 복사 완료!  Gmail 새 메일 본문에 Ctrl+V (Mac: Cmd+V) 로 붙여넣기 하세요";\n' +
+'    btn.style.background = "#00B67A";\n' +
+'  } else {\n' +
+'    btn.textContent = "⚠️ 자동 복사 실패 — 아래 본문을 직접 선택(Ctrl+A) 후 복사해 주세요";\n' +
+'    btn.style.background = "#FF6B00";\n' +
+'  }\n' +
+'  setTimeout(function() {\n' +
+'    btn.textContent = "📋 Gmail로 복사  —  클릭 후 Gmail 본문에 Ctrl+V (Cmd+V)";\n' +
+'    btn.style.background = "#0066CC";\n' +
+'  }, 4000);\n' +
+'}\n' +
+'<' + '/script>\n' +
+'</body>\n' +
+'</html>';
+}
+
+/* ═══════════════════════════════════════
+   이미지 → base64
+═══════════════════════════════════════ */
+function fileToBase64(file) {
+  return new Promise(function(resolve, reject) {
+    // 큰 이미지는 canvas로 리사이즈 (최대 1920px)
+    var img = new Image();
+    var objUrl = URL.createObjectURL(file);
+    img.onload = function() {
+      URL.revokeObjectURL(objUrl);
+      var maxW = 1920, maxH = 1920;
+      var w = img.width, h = img.height;
+      if (w > maxW || h > maxH) {
+        var ratio = Math.min(maxW / w, maxH / h);
+        w = Math.round(w * ratio); h = Math.round(h * ratio);
+      }
+      var canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      var dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+      resolve(dataUrl.split(',')[1]); // base64 part only
+    };
+    img.onerror = function() { URL.revokeObjectURL(objUrl); reject(new Error('이미지 로드 실패')); };
+    img.src = objUrl;
+  });
+}
+
+/* ═══════════════════════════════════════
+   Claude API 호출
+═══════════════════════════════════════ */
+async function callClaude(apiKey, base64, fileName) {
+  var coursesList = COURSES.map(function(c, i) { return (i+1) + '. ' + c.n + ' | ' + c.l; }).join('\n');
+
+  var systemPrompt =
+    '당신은 교육 제안 전문가이며 정밀한 OCR 전문가입니다.\n' +
+    '스크린샷 이미지를 분석하여 다음을 수행합니다:\n' +
+    '1. 이미지 내 모든 텍스트를 빠짐없이 정확하게 추출 (OCR)\n' +
+    '2. 기관명, 교육 대상, 교육 목적/배경, 메일주소를 파악\n' +
+    '3. 아래 교육과정 목록에서 내용에 가장 적합한 과정 2~4개 선택\n' +
+    '4. 메일 제목, 인사 문장, 소개 문장을 나눔경영컨설팅 스타일로 작성\n\n' +
+    '=== 교육과정 목록 ===\n' + coursesList + '\n\n' +
+    '반드시 JSON 형식으로만 응답합니다.';
+
+  var userPrompt =
+    '이 스크린샷을 분석하여 정확히 아래 JSON 형식으로만 응답해 주세요:\n\n' +
+    '{\n' +
+    '  "ocr_text": "이미지의 전체 텍스트 (줄바꿈 포함, 원문 그대로)",\n' +
+    '  "org_name": "기관명 또는 회사명 (파악 불가시 빈 문자열)",\n' +
+    '  "target": "교육 대상 (예: 임직원, 영업팀, 마케터 등, 파악 불가시 빈 문자열)",\n' +
+    '  "purpose": "교육 목적 또는 배경 요약 (1~2문장)",\n' +
+    '  "email": "메일주소 (파악 불가시 빈 문자열)",\n' +
+    '  "subject": "제안 메일 제목 (교육 주제 중심, 예: AI 활용 교육 과정 제안)",\n' +
+    '  "greeting_sentence": "귀 [기관명/협회명] [대상] 대상 [주제] 교육 준비에 대한 제안 요청에 감사드립니다. 형식의 문장",\n' +
+    '  "intro_sentence": "요청하신 [키워드] 등 [교육목표]에 부합하는 맞춤형 교육 과정을 제안 드립니다. 형식의 문장",\n' +
+    '  "matched_courses": [\n' +
+    '    {"name": "과정명 (목록에서 정확히 그대로)", "link": "https://nanumcon.com/..."},\n' +
+    '    ...\n' +
+    '  ]\n' +
+    '}\n\n' +
+    '- matched_courses는 반드시 위 목록에서만 선택 (링크 포함)\n' +
+    '- 2개 이상 4개 이하로 선택\n' +
+    '- greeting_sentence와 intro_sentence는 자연스러운 한국어 비즈니스 문장으로 작성';
+
+  var response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-5-20250929',
+      max_tokens: 4096,
+      system: systemPrompt,
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: 'image',
+            source: { type: 'base64', media_type: 'image/jpeg', data: base64 }
+          },
+          { type: 'text', text: userPrompt }
+        ]
+      }]
+    })
+  });
+
+  if (!response.ok) {
+    var errData = await response.json().catch(function(){ return {}; });
+    if (response.status === 401) throw new Error('API 키가 유효하지 않습니다. 확인 후 다시 시도해 주세요.');
+    if (response.status === 429) throw new Error('API 요청 한도 초과. 잠시 후 다시 시도해 주세요.');
+    throw new Error((errData.error && errData.error.message) || ('API 오류 (' + response.status + ')'));
+  }
+
+  var data = await response.json();
+  var rawText = data.content[0].text;
+
+  // JSON 파싱
+  var jsonStr = rawText;
+  var md = rawText.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (md) jsonStr = md[1];
+  try { return JSON.parse(jsonStr.trim()); } catch(e) {
+    var bm = jsonStr.match(/\{[\s\S]*\}/);
+    if (bm) { try { return JSON.parse(bm[0]); } catch(e2) {} }
+    throw new Error('AI 응답 파싱 실패 (파일: ' + fileName + '). 다시 시도해 주세요.');
+  }
+}
+
+/* ═══════════════════════════════════════
+   Queue 관리
+═══════════════════════════════════════ */
+var queue = []; // [{id, file, status, blobUrl}]
+var isProcessing = false;
+var idCounter = 0;
+
+function getApiKey() {
+  return document.getElementById('apiKey').value.trim();
+}
+
+function showError(msg) {
+  var el = document.getElementById('errorMsg');
+  el.textContent = msg;
+  el.classList.add('active');
+  setTimeout(function(){ el.classList.remove('active'); }, 6000);
+}
+
+function addToQueue(file) {
+  var id = 'q' + (++idCounter);
+  var item = { id: id, file: file, status: 'waiting', blobUrl: null };
+  queue.push(item);
+  renderQueueItem(item);
+  tryProcessNext();
+}
+
+function renderQueueItem(item) {
+  var queueEl = document.getElementById('queue');
+
+  // Thumbnail (object URL)
+  var thumbUrl = URL.createObjectURL(item.file);
+
+  var div = document.createElement('div');
+  div.className = 'queue-item';
+  div.id = item.id;
+  div.innerHTML =
+    '<div class="queue-thumb"><img src="' + thumbUrl + '" alt="thumb"></div>' +
+    '<div class="queue-info">' +
+      '<div class="queue-filename">' + esc(item.file.name) + '</div>' +
+      '<div class="queue-status-row">' +
+        '<span class="status-badge status-waiting" id="badge-' + item.id + '">⏳ 대기중</span>' +
+        '<span class="queue-step" id="step-' + item.id + '"></span>' +
+      '</div>' +
+      '<div class="progress-wrap" id="progress-wrap-' + item.id + '" style="display:none;">' +
+        '<div class="progress-bar"><div class="progress-fill" id="progress-' + item.id + '"></div></div>' +
+        '<span class="progress-pct" id="pct-' + item.id + '">0%</span>' +
+      '</div>' +
+    '</div>' +
+    '<div class="queue-actions">' +
+      '<a class="btn-open disabled" id="open-' + item.id + '" href="#" target="_blank">🔗 새탭으로 열기</a>' +
+    '</div>';
+  queueEl.appendChild(div);
+}
+
+function updateStatus(id, status, stepText, progress) {
+  var badge = document.getElementById('badge-' + id);
+  var step = document.getElementById('step-' + id);
+  var progressWrap = document.getElementById('progress-wrap-' + id);
+  var progressFill = document.getElementById('progress-' + id);
+  var pctLabel = document.getElementById('pct-' + id);
+  if (!badge) return;
+  badge.className = 'status-badge status-' + status;
+  if (status === 'waiting')    badge.innerHTML = '⏳ 대기중';
+  else if (status === 'processing') badge.innerHTML = '<div class="status-spinner"></div> 분석중';
+  else if (status === 'done')  badge.innerHTML = '✅ 완료';
+  else if (status === 'error') badge.innerHTML = '❌ 오류';
+  if (step) step.textContent = stepText || '';
+
+  if (progressWrap) {
+    if (status === 'processing' || (progress !== undefined && progress > 0)) {
+      progressWrap.style.display = 'flex';
+    }
+    if (status === 'done') {
+      if (progressFill) progressFill.style.width = '100%';
+      if (pctLabel) pctLabel.textContent = '100%';
+      setTimeout(function() { progressWrap.style.display = 'none'; }, 800);
+    }
+    if (status === 'error') {
+      progressWrap.style.display = 'none';
+    }
+  }
+  if (progress !== undefined && progressFill && pctLabel) {
+    progressFill.style.width = progress + '%';
+    pctLabel.textContent = progress + '%';
+  }
+}
+
+function setDone(item, blobUrl) {
+  item.status = 'done';
+  item.blobUrl = blobUrl;
+  updateStatus(item.id, 'done', '');
+
+  var openLink = document.getElementById('open-' + item.id);
+  if (openLink) {
+    openLink.href = blobUrl;
+    openLink.classList.remove('disabled');
+  }
+}
+
+async function tryProcessNext() {
+  if (isProcessing) return;
+  var pending = queue.find(function(i){ return i.status === 'waiting'; });
+  if (!pending) return;
+
+  var apiKey = getApiKey();
+  if (!apiKey) {
+    showError('Anthropic API Key를 먼저 입력해 주세요.');
+    return;
+  }
+
+  isProcessing = true;
+  pending.status = 'processing';
+  updateStatus(pending.id, 'processing', '① 이미지 변환 중...', 5);
+
+  try {
+    updateStatus(pending.id, 'processing', '① 이미지 로드 및 리사이즈...', 10);
+    var base64 = await fileToBase64(pending.file);
+
+    updateStatus(pending.id, 'processing', '② API 전송 준비...', 20);
+
+    // 프로그레스 시뮬레이션 타이머 (AI 분석 중 점진적 증가)
+    var progressVal = 20;
+    var progressTimer = setInterval(function() {
+      if (progressVal < 85) {
+        progressVal += Math.random() * 4 + 1;
+        if (progressVal > 85) progressVal = 85;
+        var stepLabel;
+        if (progressVal < 35) stepLabel = '③ AI에 이미지 전송 중...';
+        else if (progressVal < 50) stepLabel = '④ OCR 텍스트 추출 중...';
+        else if (progressVal < 65) stepLabel = '⑤ 교육과정 매칭 분석 중...';
+        else if (progressVal < 80) stepLabel = '⑥ 제안 메일 생성 중...';
+        else stepLabel = '⑦ 응답 수신 중...';
+        updateStatus(pending.id, 'processing', stepLabel, Math.round(progressVal));
+      }
+    }, 600);
+
+    var parsed = await callClaude(apiKey, base64, pending.file.name);
+    clearInterval(progressTimer);
+
+    updateStatus(pending.id, 'processing', '⑧ 결과 페이지 생성 중...', 90);
+
+    var dateStr = new Date().toLocaleString('ko-KR');
+    var html = buildOutputHTML(pending.file.name, dateStr, parsed.ocr_text || '', parsed);
+    var blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    var blobUrl = URL.createObjectURL(blob);
+
+    updateStatus(pending.id, 'processing', '✨ 완료!', 100);
+    await new Promise(function(r) { setTimeout(r, 400); });
+
+    setDone(pending, blobUrl);
+
+  } catch(err) {
+    if (typeof progressTimer !== 'undefined') clearInterval(progressTimer);
+    pending.status = 'error';
+    updateStatus(pending.id, 'error', err.message);
+    showError(pending.file.name + ' 처리 중 오류: ' + err.message);
+  }
+
+  isProcessing = false;
+  tryProcessNext(); // process next in queue
+}
+
+/* ═══════════════════════════════════════
+   Drag & Drop + File Input
+═══════════════════════════════════════ */
+var dropZone = document.getElementById('dropZone');
+var fileInput = document.getElementById('fileInput');
+
+dropZone.addEventListener('dragover', function(e) {
+  e.preventDefault();
+  dropZone.classList.add('drag-over');
+});
+dropZone.addEventListener('dragleave', function(e) {
+  if (!dropZone.contains(e.relatedTarget)) dropZone.classList.remove('drag-over');
+});
+dropZone.addEventListener('drop', function(e) {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  var files = Array.from(e.dataTransfer.files).filter(function(f){ return f.type.startsWith('image/'); });
+  if (files.length === 0) { showError('이미지 파일만 업로드 가능합니다.'); return; }
+  files.forEach(addToQueue);
+});
+
+dropZone.addEventListener('click', function(e) {
+  if (e.target === dropZone || e.target.classList.contains('drop-icon') ||
+      e.target.classList.contains('drop-text') || e.target.classList.contains('drop-hint')) {
+    fileInput.click();
+  }
+});
+
+fileInput.addEventListener('change', function() {
+  var files = Array.from(fileInput.files).filter(function(f){ return f.type.startsWith('image/'); });
+  files.forEach(addToQueue);
+  fileInput.value = '';
+});
+
+/* ─── API Key localStorage ─── */
+var savedKey = localStorage.getItem('edu_gen_api_key');
+if (savedKey) document.getElementById('apiKey').value = savedKey;
+document.getElementById('apiKey').addEventListener('change', function() {
+  localStorage.setItem('edu_gen_api_key', this.value.trim());
+});
+
+})();
+</script>
+</body>
+</html>
