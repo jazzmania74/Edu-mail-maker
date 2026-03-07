@@ -262,12 +262,13 @@ body {
   </header>
 
   <!-- API Key -->
-  <section class="section-card">
-    <div class="section-title"><span class="icon icon-blue">⚙️</span> 설정</div>
-    <div class="input-group">
-      <label class="input-label">Anthropic API Key</label>
-      <input type="password" class="input-field" id="apiKey" placeholder="sk-ant-api03-...">
-      <span class="input-hint">API 키는 브라우저에서만 사용되며 어디에도 저장·전송되지 않습니다. (로컬 localStorage에만 임시 보관)</span>
+  <section class="section-card" style="padding:10px 14px;">
+    <div class="api-toggle" id="apiToggle" style="cursor:pointer;font-size:13px;font-weight:bold;color:#1a73e8;user-select:none;">
+      🔑 Claude API <span id="apiArrow">▶</span> <span id="apiStatus" style="color:#2e7d32;font-size:12px;"></span>
+    </div>
+    <div id="apiKeyArea" style="display:none;margin-top:8px;display:flex;gap:6px;align-items:center;">
+      <input type="password" class="input-field" id="apiKey" placeholder="sk-ant-api03-..." style="flex:1;margin:0;">
+      <button id="apiSaveBtn" style="padding:8px 16px;background:#1a73e8;color:white;border:none;border-radius:8px;cursor:pointer;font-size:12px;white-space:nowrap;">저장</button>
     </div>
   </section>
 
@@ -999,11 +1000,40 @@ fileInput.addEventListener('change', function() {
   fileInput.value = '';
 });
 
-/* ─── API Key localStorage ─── */
+/* ─── API Key (접이식 UI) ─── */
 var savedKey = localStorage.getItem('edu_gen_api_key');
-if (savedKey) document.getElementById('apiKey').value = savedKey;
-document.getElementById('apiKey').addEventListener('change', function() {
-  localStorage.setItem('edu_gen_api_key', this.value.trim());
+var apiKeyArea = document.getElementById('apiKeyArea');
+var apiArrow = document.getElementById('apiArrow');
+var apiStatus = document.getElementById('apiStatus');
+if (savedKey) {
+  document.getElementById('apiKey').value = savedKey;
+  apiStatus.textContent = '✅ 저장됨';
+  apiKeyArea.style.display = 'none';
+} else {
+  apiKeyArea.style.display = 'flex';
+}
+document.getElementById('apiToggle').addEventListener('click', function() {
+  if (apiKeyArea.style.display === 'none') {
+    apiKeyArea.style.display = 'flex'; apiArrow.textContent = '▼';
+  } else {
+    apiKeyArea.style.display = 'none'; apiArrow.textContent = '▶';
+  }
+});
+document.getElementById('apiSaveBtn').addEventListener('click', function() {
+  var k = document.getElementById('apiKey').value.trim();
+  if (!k) return;
+  localStorage.setItem('edu_gen_api_key', k);
+  apiStatus.textContent = '✅ 저장됨';
+  apiKeyArea.style.display = 'none'; apiArrow.textContent = '▶';
+});
+document.getElementById('apiKey').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    var k = this.value.trim();
+    if (!k) return;
+    localStorage.setItem('edu_gen_api_key', k);
+    apiStatus.textContent = '✅ 저장됨';
+    apiKeyArea.style.display = 'none'; apiArrow.textContent = '▶';
+  }
 });
 
 })();
