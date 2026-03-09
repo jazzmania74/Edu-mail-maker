@@ -1247,6 +1247,24 @@ document.getElementById('apiKey').addEventListener('keydown', function(e) {
   }
 });
 
+/* ─── URL 파라미터 자동 분석 (Edu-CRM 연동) ─── */
+(function checkUrlParam(){
+  var params = new URLSearchParams(window.location.search);
+  var autoText = params.get('text');
+  if(autoText && autoText.trim().length >= 5){
+    setTimeout(function(){
+      textInput.value = autoText.trim();
+      addTextToQueue(autoText.trim());
+      textInput.value = '';
+      // URL에서 파라미터 제거 (새로고침 시 중복 방지)
+      if(window.history.replaceState){
+        var cleanUrl = window.location.pathname;
+        window.history.replaceState(null, '', cleanUrl);
+      }
+    }, 500);
+  }
+})();
+
 })();
 </script>
 </body>
